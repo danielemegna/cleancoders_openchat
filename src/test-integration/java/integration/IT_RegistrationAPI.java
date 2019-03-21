@@ -7,13 +7,15 @@ import static integration.APITestSuit.BASE_URL;
 import static integration.APITestSuit.UUID_PATTERN;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
+import static io.restassured.http.ContentType.TEXT;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.matchesPattern;
 
 public class IT_RegistrationAPI {
 
-    @Test public void
-    register_a_new_user() {
+    @Test
+    public void
+    register_a_new_user_and_retry_again_with_same_username() {
         given()
             .body(withJsonContaining("Lucy", "alki324d", "About Lucy"))
             .when()
@@ -24,6 +26,15 @@ public class IT_RegistrationAPI {
             .body("id", matchesPattern(UUID_PATTERN))
             .body("username", is("Lucy"))
             .body("about", is("About Lucy"));
+
+        given()
+            .body(withJsonContaining("Lucy", "any", "any"))
+            .when()
+            .post(BASE_URL + "/users")
+            .then()
+            .statusCode(400)
+            .contentType(TEXT)
+            .body(is("Username already in use."));
     }
 
     private String withJsonContaining(String username, String password, String about) {
