@@ -1,6 +1,10 @@
 package org.openchat;
 
+import org.openchat.delivery.HexagonalRequest;
+import org.openchat.delivery.HexagonalResponse;
 import org.openchat.delivery.UsersEndPoint;
+import spark.Request;
+import spark.Response;
 
 import static spark.Spark.*;
 
@@ -20,11 +24,19 @@ public class Routes {
     }
 
     private void swaggerRoutes() {
-        post("users", (req, res) -> usersEndPoint.hit(req, res));
+        post("users", this::usersApi);
         options("login", (req, res) -> "OK");
         options("users/:userId/timeline", (req, res) -> "OK");
         options("followings", (req, res) -> "OK");
         options("followings/:userId/followees", (req, res) -> "OK");
         options("users/:userId/wall", (req, res) -> "OK");
+    }
+
+    private String usersApi(Request req, Response res) {
+        HexagonalRequest hexagonalRequest = new HexagonalRequest(req.body());
+        HexagonalResponse hexagonalResponse = usersEndPoint.hit(hexagonalRequest);
+        res.status(hexagonalResponse.statusCode);
+        res.type(hexagonalResponse.contentType);
+        return hexagonalResponse.responseBody;
     }
 }

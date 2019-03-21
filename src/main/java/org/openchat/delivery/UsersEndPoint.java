@@ -3,8 +3,6 @@ package org.openchat.delivery;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import org.openchat.domain.User;
-import spark.Request;
-import spark.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,26 +12,32 @@ public class UsersEndPoint {
 
     private List<String> registeredUsers = new ArrayList<>();
 
-    public Object hit(Request req, Response res) {
-        User newUser = parseUser(req);
-        if (registeredUsers.contains(newUser.username)) {
-            res.status(400);
-            res.type("text/plain");
-            return "Username already in use.";
-        } else {
-            registeredUsers.add(newUser.username);
-            res.status(201);
-            res.type("application/json");
-            return new JsonObject()
-                .add("id", UUID.randomUUID().toString())
+    public HexagonalResponse hit(HexagonalRequest request) {
+        try {
+            User newUser = parseUser(request);
+            String newUserUUID = register(newUser);
+            String responseBody = new JsonObject()
+                .add("id", newUserUUID)
                 .add("username", newUser.username)
                 .add("about", newUser.about)
                 .toString();
+            return new HexagonalResponse(201, "application/json", responseBody);
+        } catch (RuntimeException ex) {
+            return new HexagonalResponse(400, "text/plain", ex.getMessage());
         }
     }
 
-    private User parseUser(Request req) {
-        JsonObject userJson = Json.parse(req.body()).asObject();
+    private String register(User newUser) {
+        if (registeredUsers.contains(newUser.username)) {
+            throw new RuntimeException("Username already in use.");
+        } else {
+            registeredUsers.add(newUser.username);
+            return UUID.randomUUID().toString();
+        }
+    }
+
+    private User parseUser(HexagonalRequest request) {
+        JsonObject userJson = Json.parse(request.body).asObject();
         return new User(
             userJson.getString("username", ""),
             userJson.getString("password", ""),
