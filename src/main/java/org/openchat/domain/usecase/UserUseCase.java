@@ -1,6 +1,6 @@
 package org.openchat.domain.usecase;
 
-import org.openchat.domain.User;
+import org.openchat.domain.entity.User;
 import org.openchat.domain.repository.UserRepository;
 
 public class UserUseCase {

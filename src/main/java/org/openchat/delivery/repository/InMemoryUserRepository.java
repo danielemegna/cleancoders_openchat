@@ -1,6 +1,6 @@
 package org.openchat.delivery.repository;
 
-import org.openchat.domain.User;
+import org.openchat.domain.entity.User;
 import org.openchat.domain.repository.UserRepository;
 
 import java.util.ArrayList;

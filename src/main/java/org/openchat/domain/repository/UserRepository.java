@@ -1,6 +1,6 @@
 package org.openchat.domain.repository;
 
-import org.openchat.domain.User;
+import org.openchat.domain.entity.User;
 
 public interface UserRepository {
     public boolean isUsernameUsed(String username);

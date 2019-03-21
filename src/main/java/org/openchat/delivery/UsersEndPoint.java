@@ -2,7 +2,7 @@ package org.openchat.delivery;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
-import org.openchat.domain.User;
+import org.openchat.domain.entity.User;
 import org.openchat.domain.usecase.UserUseCase;
 
 

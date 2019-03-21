@@ -1,4 +1,4 @@
-package org.openchat.domain;
+package org.openchat.domain.entity;
 
 public class User {
     public final String id;
