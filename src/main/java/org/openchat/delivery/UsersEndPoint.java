@@ -3,14 +3,16 @@ package org.openchat.delivery;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import org.openchat.domain.User;
+import org.openchat.domain.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class UsersEndPoint {
 
-    private List<String> registeredUsers = new ArrayList<>();
+    private final UserRepository userRepository;
+
+    public UsersEndPoint(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public HexagonalResponse hit(HexagonalRequest request) {
         try {
@@ -28,11 +30,10 @@ public class UsersEndPoint {
     }
 
     private String register(User newUser) {
-        if (registeredUsers.contains(newUser.username)) {
+        if (userRepository.isUsernameUsed(newUser.username)) {
             throw new RuntimeException("Username already in use.");
         } else {
-            registeredUsers.add(newUser.username);
-            return UUID.randomUUID().toString();
+            return userRepository.add(newUser);
         }
     }
 

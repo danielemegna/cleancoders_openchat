@@ -3,6 +3,7 @@ package org.openchat;
 import org.openchat.delivery.HexagonalRequest;
 import org.openchat.delivery.HexagonalResponse;
 import org.openchat.delivery.UsersEndPoint;
+import org.openchat.delivery.repository.InMemoryUserRepository;
 import spark.Request;
 import spark.Response;
 
@@ -13,7 +14,7 @@ public class Routes {
     private UsersEndPoint usersEndPoint;
 
     public void create() {
-        usersEndPoint = new UsersEndPoint();
+        usersEndPoint = new UsersEndPoint(new InMemoryUserRepository());
 
         swaggerRoutes();
         openchatRoutes();

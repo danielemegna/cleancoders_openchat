@@ -5,11 +5,14 @@ import integration.APITestSuit
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.matchesPattern
 import org.junit.Test
+import org.openchat.delivery.repository.InMemoryUserRepository
+import org.openchat.domain.User
 import kotlin.test.assertEquals
 
 class UsersEndPointOfflineAcceptanceTest {
 
-    private val usersEndPoint = UsersEndPoint()
+    private val userRepository = InMemoryUserRepository()
+    private val usersEndPoint = UsersEndPoint(userRepository)
 
     @Test
     fun `register new user`() {
@@ -32,13 +35,13 @@ class UsersEndPointOfflineAcceptanceTest {
 
     @Test
     fun `register already present user`() {
+        userRepository.add(User("Lucy", "any", "any"))
         val hexagonalRequest = HexagonalRequest("""{
           "username": "Lucy",
-          "password": "alki324d",
-          "about": "About Lucy"
+          "password": "any",
+          "about": "any"
         }""")
 
-        usersEndPoint.hit(hexagonalRequest)
         val hexagonalResponse = usersEndPoint.hit(hexagonalRequest)
 
         assertEquals(400, hexagonalResponse.statusCode)
