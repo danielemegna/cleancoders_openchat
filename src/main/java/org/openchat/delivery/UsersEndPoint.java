@@ -1,5 +1,6 @@
 package org.openchat.delivery;
 
+import com.eclipsesource.json.JsonObject;
 import spark.Request;
 import spark.Response;
 
@@ -8,10 +9,10 @@ public class UsersEndPoint {
         res.status(201);
         res.type("application/json");
 
-        return "{\n" +
-            "  \"id\":\"3b230a0a-4a8d-4dd6-80f7-338f0be2f67f\",\n" +
-            "  \"username\":\"Lucy\",\n" +
-            "  \"about\":\"About Lucy\"\n" +
-            "}";
+        return new JsonObject()
+            .add("id", "3b230a0a-4a8d-4dd6-80f7-338f0be2f67f")
+            .add("username", "Lucy")
+            .add("about", "About Lucy")
+            .toString();
     }
 }
