@@ -1,11 +1,16 @@
 package org.openchat;
 
-import static spark.Spark.get;
-import static spark.Spark.options;
+import org.openchat.delivery.UsersEndPoint;
+
+import static spark.Spark.*;
 
 public class Routes {
 
+    private UsersEndPoint usersEndPoint;
+
     public void create() {
+        usersEndPoint = new UsersEndPoint();
+
         swaggerRoutes();
         openchatRoutes();
     }
@@ -15,7 +20,7 @@ public class Routes {
     }
 
     private void swaggerRoutes() {
-        options("users", (req, res) -> "OK");
+        post("users", (req, res) -> usersEndPoint.hit(req, res));
         options("login", (req, res) -> "OK");
         options("users/:userId/timeline", (req, res) -> "OK");
         options("followings", (req, res) -> "OK");
