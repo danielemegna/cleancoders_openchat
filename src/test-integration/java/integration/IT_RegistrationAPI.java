@@ -15,22 +15,22 @@ public class IT_RegistrationAPI {
     @Test public void
     register_a_new_user() {
         given()
-                .body(withJsonContaining("Lucy", "alki324d", "About Lucy"))
-        .when()
-                .post(BASE_URL + "/users")
-        .then()
-                .statusCode(201)
-                .contentType(JSON)
-                .body("id", matchesPattern(UUID_PATTERN))
-                .body("username", is("Lucy"))
-                .body("about", is("About Lucy"));
+            .body(withJsonContaining("Lucy", "alki324d", "About Lucy"))
+            .when()
+            .post(BASE_URL + "/users")
+            .then()
+            .statusCode(201)
+            .contentType(JSON)
+            .body("id", matchesPattern(UUID_PATTERN))
+            .body("username", is("Lucy"))
+            .body("about", is("About Lucy"));
     }
 
     private String withJsonContaining(String username, String password, String about) {
         return new JsonObject()
-                        .add("username", username)
-                        .add("password", password)
-                        .add("about", about)
-                        .toString();
+            .add("username", username)
+            .add("password", password)
+            .add("about", about)
+            .toString();
     }
 }
