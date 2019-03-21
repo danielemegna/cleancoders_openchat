@@ -7,12 +7,13 @@ import org.hamcrest.Matchers.matchesPattern
 import org.junit.Test
 import org.openchat.delivery.repository.InMemoryUserRepository
 import org.openchat.domain.User
+import org.openchat.domain.usecase.UserUseCase
 import kotlin.test.assertEquals
 
 class UsersEndPointOfflineAcceptanceTest {
 
     private val userRepository = InMemoryUserRepository()
-    private val usersEndPoint = UsersEndPoint(userRepository)
+    private val usersEndPoint = UsersEndPoint(UserUseCase(userRepository))
 
     @Test
     fun `register new user`() {

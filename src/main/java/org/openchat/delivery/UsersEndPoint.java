@@ -3,38 +3,38 @@ package org.openchat.delivery;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import org.openchat.domain.User;
-import org.openchat.domain.repository.UserRepository;
+import org.openchat.domain.usecase.UserUseCase;
 
 
 public class UsersEndPoint {
 
-    private final UserRepository userRepository;
+    private final UserUseCase useCase;
 
-    public UsersEndPoint(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UsersEndPoint(UserUseCase useCase) {
+        this.useCase = useCase;
     }
 
     public HexagonalResponse hit(HexagonalRequest request) {
         try {
-            User newUser = parseUser(request);
-            String newUserUUID = register(newUser);
-            String responseBody = new JsonObject()
-                .add("id", newUserUUID)
-                .add("username", newUser.username)
-                .add("about", newUser.about)
-                .toString();
+            String responseBody = runUseCase(request);
             return new HexagonalResponse(201, "application/json", responseBody);
-        } catch (RuntimeException ex) {
-            return new HexagonalResponse(400, "text/plain", ex.getMessage());
+        } catch (UserUseCase.UsernameAlreadyInUseException ex) {
+            return new HexagonalResponse(400, "text/plain", "Username already in use.");
         }
     }
 
-    private String register(User newUser) {
-        if (userRepository.isUsernameUsed(newUser.username)) {
-            throw new RuntimeException("Username already in use.");
-        } else {
-            return userRepository.add(newUser);
-        }
+    private String runUseCase(HexagonalRequest request) {
+        User newUser = parseUser(request);
+        String newUserUUID = useCase.register(newUser);
+        return serializeUser(newUser, newUserUUID);
+    }
+
+    private String serializeUser(User user, String userUUID) {
+        return new JsonObject()
+            .add("id", userUUID)
+            .add("username", user.username)
+            .add("about", user.about)
+            .toString();
     }
 
     private User parseUser(HexagonalRequest request) {
