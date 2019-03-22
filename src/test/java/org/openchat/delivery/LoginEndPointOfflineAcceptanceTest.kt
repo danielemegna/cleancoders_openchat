@@ -38,4 +38,18 @@ class LoginEndPointOfflineAcceptanceTest {
             assertEquals("About Antony", it.getString("about", ""))
         }
     }
+
+    @Test
+    fun `login attempt with wrong credentials`() {
+        val hexagonalRequest = HexagonalRequest("""{
+          "username": "Wrong",
+          "password": "wrongwrong"
+        }""")
+
+        val hexagonalResponse = endPoint.hit(hexagonalRequest)
+
+        assertEquals(404, hexagonalResponse.statusCode)
+        assertEquals("text/plain", hexagonalResponse.contentType)
+        assertEquals("Invalid credentials.", hexagonalResponse.responseBody)
+    }
 }

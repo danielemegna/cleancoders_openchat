@@ -14,10 +14,13 @@ public class LoginEndPoint {
     }
 
     public HexagonalResponse hit(HexagonalRequest request) {
-        String responseBody = runUseCase(request);
-        return new HexagonalResponse(
-            200, "application/json", responseBody
-        );
+        try {
+            String responseBody = runUseCase(request);
+            return new HexagonalResponse(200, "application/json", responseBody);
+
+        } catch (LoginUseCase.InvalidCredentialsException ex) {
+            return new HexagonalResponse(404, "text/plain", "Invalid credentials.");
+        }
     }
 
     private String runUseCase(HexagonalRequest request) {
