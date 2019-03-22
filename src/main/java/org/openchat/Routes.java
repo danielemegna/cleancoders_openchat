@@ -46,7 +46,10 @@ public class Routes {
 
     private String handleWith(EndPoint endPoint, Request sparkRequest, Response sparkResponse) {
         HexagonalResponse hexagonalResponse = endPoint.hit(
-            new HexagonalRequest(sparkRequest.body())
+            new HexagonalRequest(
+                sparkRequest.body(),
+                sparkRequest.requestMethod()
+            )
         );
 
         sparkResponse.status(hexagonalResponse.statusCode);

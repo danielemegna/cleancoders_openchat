@@ -21,7 +21,7 @@ class UsersEndPointOfflineAcceptanceTest {
           "username": "Lucy",
           "password": "alki324d",
           "about": "About Lucy"
-        }""")
+        }""", "POST")
 
         val hexagonalResponse = usersEndPoint.hit(hexagonalRequest)
 
@@ -41,7 +41,7 @@ class UsersEndPointOfflineAcceptanceTest {
           "username": "Lucy",
           "password": "any",
           "about": "any"
-        }""")
+        }""", "POST")
 
         val hexagonalResponse = usersEndPoint.hit(hexagonalRequest)
 
