@@ -16,4 +16,8 @@ public class User {
     public User(String username, String password, String about) {
         this(null, username, password, about);
     }
+
+    public User(String username, String password) {
+        this(null, username, password, null);
+    }
 }

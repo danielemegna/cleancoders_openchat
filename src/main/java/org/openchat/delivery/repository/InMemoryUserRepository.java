@@ -5,6 +5,7 @@ import org.openchat.domain.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class InMemoryUserRepository implements UserRepository {
@@ -21,5 +22,12 @@ public class InMemoryUserRepository implements UserRepository {
         User storedUser = new User(UUID.randomUUID().toString(), newUser.username, newUser.password, newUser.about);
         store.add(storedUser);
         return storedUser.id;
+    }
+
+    @Override
+    public Optional<User> getByCredentials(String username, String password) {
+        return store.stream()
+            .filter(u -> u.username.equals(username) && u.password.equals(password))
+            .findFirst();
     }
 }
