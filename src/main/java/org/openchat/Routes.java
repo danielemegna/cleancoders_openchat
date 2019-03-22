@@ -1,9 +1,6 @@
 package org.openchat;
 
-import org.openchat.delivery.HexagonalRequest;
-import org.openchat.delivery.HexagonalResponse;
-import org.openchat.delivery.LoginEndPoint;
-import org.openchat.delivery.UsersEndPoint;
+import org.openchat.delivery.*;
 import org.openchat.delivery.repository.InMemoryUserRepository;
 import org.openchat.domain.usecase.LoginUseCase;
 import org.openchat.domain.usecase.UserUseCase;
@@ -37,27 +34,21 @@ public class Routes {
     }
 
     private void swaggerRoutes() {
-        post("users", this::usersApi);
-        post("login", this::loginApi);
+        post("users", (req, res) -> handleWith(usersEndPoint, req, res));
+        post("login", (req, res) -> handleWith(loginEndPoint, req, res));
         options("users/:userId/timeline", (req, res) -> "OK");
         options("followings", (req, res) -> "OK");
         options("followings/:userId/followees", (req, res) -> "OK");
         options("users/:userId/wall", (req, res) -> "OK");
     }
 
-    private String loginApi(Request req, Response res) {
-        HexagonalRequest hexagonalRequest = new HexagonalRequest(req.body());
-        HexagonalResponse hexagonalResponse = loginEndPoint.hit(hexagonalRequest);
-        res.status(hexagonalResponse.statusCode);
-        res.type(hexagonalResponse.contentType);
-        return hexagonalResponse.responseBody;
-    }
+    private String handleWith(EndPoint endPoint, Request sparkRequest, Response sparkResponse) {
+        HexagonalResponse hexagonalResponse = endPoint.hit(
+            new HexagonalRequest(sparkRequest.body())
+        );
 
-    private String usersApi(Request req, Response res) {
-        HexagonalRequest hexagonalRequest = new HexagonalRequest(req.body());
-        HexagonalResponse hexagonalResponse = usersEndPoint.hit(hexagonalRequest);
-        res.status(hexagonalResponse.statusCode);
-        res.type(hexagonalResponse.contentType);
+        sparkResponse.status(hexagonalResponse.statusCode);
+        sparkResponse.type(hexagonalResponse.contentType);
         return hexagonalResponse.responseBody;
     }
 }

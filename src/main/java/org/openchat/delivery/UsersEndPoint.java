@@ -6,7 +6,7 @@ import org.openchat.domain.entity.User;
 import org.openchat.domain.usecase.UserUseCase;
 
 
-public class UsersEndPoint {
+public class UsersEndPoint implements EndPoint {
 
     private final UserUseCase useCase;
 

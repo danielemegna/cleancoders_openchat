@@ -5,7 +5,7 @@ import com.eclipsesource.json.JsonObject;
 import org.openchat.domain.entity.User;
 import org.openchat.domain.usecase.LoginUseCase;
 
-public class LoginEndPoint {
+public class LoginEndPoint implements EndPoint {
 
     private final LoginUseCase useCase;
 
