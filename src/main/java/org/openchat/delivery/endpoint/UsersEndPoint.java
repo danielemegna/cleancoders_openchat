@@ -1,8 +1,10 @@
-package org.openchat.delivery;
+package org.openchat.delivery.endpoint;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
+import org.openchat.delivery.HexagonalRequest;
+import org.openchat.delivery.HexagonalResponse;
 import org.openchat.domain.entity.User;
 import org.openchat.domain.usecase.UserUseCase;
 

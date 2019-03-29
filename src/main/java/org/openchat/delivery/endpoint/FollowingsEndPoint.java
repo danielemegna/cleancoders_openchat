@@ -1,7 +1,9 @@
-package org.openchat.delivery;
+package org.openchat.delivery.endpoint;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
+import org.openchat.delivery.HexagonalRequest;
+import org.openchat.delivery.HexagonalResponse;
 import org.openchat.domain.entity.Following;
 import org.openchat.domain.usecase.FollowingsUseCase;
 

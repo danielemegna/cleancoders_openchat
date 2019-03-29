@@ -1,6 +1,7 @@
 package org.openchat.delivery
 
 import org.junit.Test
+import org.openchat.delivery.endpoint.FollowingsEndPoint
 import org.openchat.domain.usecase.FollowingsUseCase
 import java.util.*
 import kotlin.test.assertEquals

@@ -1,6 +1,11 @@
 package org.openchat;
 
-import org.openchat.delivery.*;
+import org.openchat.delivery.HexagonalRequest;
+import org.openchat.delivery.HexagonalResponse;
+import org.openchat.delivery.endpoint.EndPoint;
+import org.openchat.delivery.endpoint.FollowingsEndPoint;
+import org.openchat.delivery.endpoint.LoginEndPoint;
+import org.openchat.delivery.endpoint.UsersEndPoint;
 import org.openchat.delivery.repository.InMemoryUserRepository;
 import org.openchat.domain.usecase.FollowingsUseCase;
 import org.openchat.domain.usecase.LoginUseCase;

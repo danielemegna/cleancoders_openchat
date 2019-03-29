@@ -5,6 +5,7 @@ import integration.APITestSuit
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.matchesPattern
 import org.junit.Test
+import org.openchat.delivery.endpoint.UsersEndPoint
 import org.openchat.delivery.repository.InMemoryUserRepository
 import org.openchat.domain.entity.User
 import org.openchat.domain.usecase.UserUseCase
