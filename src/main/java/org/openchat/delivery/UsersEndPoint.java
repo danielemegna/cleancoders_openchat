@@ -16,25 +16,24 @@ public class UsersEndPoint implements EndPoint {
 
     public HexagonalResponse hit(HexagonalRequest request) {
         try {
-            String responseBody = runUseCase(request);
-            return new HexagonalResponse(201, "application/json", responseBody);
+            return runUseCase(request);
         } catch (UserUseCase.UsernameAlreadyInUseException ex) {
             return new HexagonalResponse(400, "text/plain", "Username already in use.");
         }
     }
 
-    private String runUseCase(HexagonalRequest request) {
+    private HexagonalResponse runUseCase(HexagonalRequest request) {
         User newUser = parseUser(request);
         String newUserUUID = useCase.register(newUser);
-        return serializeUser(newUser, newUserUUID);
+        String responseBody = serializeUser(newUser, newUserUUID).toString();
+        return new HexagonalResponse(201, "application/json", responseBody);
     }
 
-    private String serializeUser(User user, String userUUID) {
+    private JsonObject serializeUser(User user, String userUUID) {
         return new JsonObject()
             .add("id", userUUID)
             .add("username", user.username)
-            .add("about", user.about)
-            .toString();
+            .add("about", user.about);
     }
 
     private User parseUser(HexagonalRequest request) {
