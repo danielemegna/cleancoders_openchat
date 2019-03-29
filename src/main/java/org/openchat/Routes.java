@@ -2,6 +2,7 @@ package org.openchat;
 
 import org.openchat.delivery.*;
 import org.openchat.delivery.repository.InMemoryUserRepository;
+import org.openchat.domain.usecase.FollowingsUseCase;
 import org.openchat.domain.usecase.LoginUseCase;
 import org.openchat.domain.usecase.UserUseCase;
 import spark.Request;
@@ -13,6 +14,7 @@ public class Routes {
 
     private UsersEndPoint usersEndPoint;
     private LoginEndPoint loginEndPoint;
+    private FollowingsEndPoint followingsEndPoint;
 
     public void create() {
         InMemoryUserRepository userRepository = new InMemoryUserRepository();
@@ -25,6 +27,10 @@ public class Routes {
             new LoginUseCase(userRepository)
         );
 
+        followingsEndPoint = new FollowingsEndPoint(
+            new FollowingsUseCase()
+        );
+
         swaggerRoutes();
         openchatRoutes();
     }
@@ -34,6 +40,7 @@ public class Routes {
         post("users", (req, res) -> handleWith(usersEndPoint, req, res));
         post("login", (req, res) -> handleWith(loginEndPoint, req, res));
         get("users", (req, res) -> handleWith(usersEndPoint, req, res));
+        post("followings", (req, res) -> handleWith(followingsEndPoint, req, res));
     }
 
     private void swaggerRoutes() {
