@@ -61,6 +61,7 @@ public class Routes {
         HexagonalResponse hexagonalResponse = endPoint.hit(
             new HexagonalRequest(
                 sparkRequest.body(),
+                sparkRequest.params(),
                 sparkRequest.requestMethod()
             )
         );

@@ -15,7 +15,7 @@ class FollowingsEndPointOfflineAcceptanceTest {
         val hexagonalRequest = HexagonalRequest("""{
           "followerId": "${UUID.randomUUID()}",
           "followeeId": "${UUID.randomUUID()}"
-        }""", "POST")
+        }""")
 
         val hexagonalResponse = endpoint.hit(hexagonalRequest)
 
@@ -29,7 +29,7 @@ class FollowingsEndPointOfflineAcceptanceTest {
         val hexagonalRequest = HexagonalRequest("""{
           "followerId": "${UUID.randomUUID()}",
           "followeeId": "${UUID.randomUUID()}"
-        }""", "POST")
+        }""")
 
         endpoint.hit(hexagonalRequest)
         val hexagonalResponse = endpoint.hit(hexagonalRequest)

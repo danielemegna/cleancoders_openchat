@@ -27,7 +27,7 @@ class LoginEndPointOfflineAcceptanceTest {
         val hexagonalRequest = HexagonalRequest("""{
           "username": "Antony",
           "password": "dj48sh"
-        }""", "POST")
+        }""")
 
         val hexagonalResponse = endPoint.hit(hexagonalRequest)
 
@@ -45,7 +45,7 @@ class LoginEndPointOfflineAcceptanceTest {
         val hexagonalRequest = HexagonalRequest("""{
           "username": "Wrong",
           "password": "wrongwrong"
-        }""", "POST")
+        }""")
 
         val hexagonalResponse = endPoint.hit(hexagonalRequest)
 
