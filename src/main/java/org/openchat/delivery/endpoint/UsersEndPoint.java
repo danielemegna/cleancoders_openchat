@@ -10,7 +10,6 @@ import org.openchat.domain.usecase.UserUseCase;
 
 import java.util.List;
 
-
 public class UsersEndPoint implements EndPoint {
 
     private final UserUseCase useCase;

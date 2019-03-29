@@ -6,15 +6,20 @@ import org.openchat.domain.usecase.FollowingsUseCase
 import java.util.*
 import kotlin.test.assertEquals
 
-class FollowingsEndPointOfflineAcceptanceTest {
+class FollowingsEndPointOfflineAcceptanceTest() {
+
+    companion object {
+        private val A_REGISTERED_USER_UUID = UUID.randomUUID().toString();
+        private val ANOTHER_REGISTERED_USER_UUID = UUID.randomUUID().toString();
+    }
 
     private val endpoint = FollowingsEndPoint(FollowingsUseCase())
 
     @Test
     fun `add a following user`() {
         val hexagonalRequest = HexagonalRequest("""{
-          "followerId": "${UUID.randomUUID()}",
-          "followeeId": "${UUID.randomUUID()}"
+          "followerId": "$A_REGISTERED_USER_UUID",
+          "followeeId": "$ANOTHER_REGISTERED_USER_UUID"
         }""")
 
         val hexagonalResponse = endpoint.hit(hexagonalRequest)
@@ -27,8 +32,8 @@ class FollowingsEndPointOfflineAcceptanceTest {
     @Test
     fun `add twice a following should return a 400 error`() {
         val hexagonalRequest = HexagonalRequest("""{
-          "followerId": "${UUID.randomUUID()}",
-          "followeeId": "${UUID.randomUUID()}"
+          "followerId": "$A_REGISTERED_USER_UUID",
+          "followeeId": "$ANOTHER_REGISTERED_USER_UUID"
         }""")
 
         endpoint.hit(hexagonalRequest)
