@@ -49,4 +49,36 @@ class UsersEndPointOfflineAcceptanceTest {
         assertEquals("text/plain", hexagonalResponse.contentType)
         assertEquals("Username already in use.", hexagonalResponse.responseBody)
     }
+
+    @Test
+    fun `get users with no users registered`() {
+        val hexagonalRequest = HexagonalRequest("", "GET")
+
+        val hexagonalResponse = usersEndPoint.hit(hexagonalRequest)
+
+        assertEquals(200, hexagonalResponse.statusCode)
+        assertEquals("application/json", hexagonalResponse.contentType)
+        assertEquals("[]", hexagonalResponse.responseBody)
+    }
+
+    @Test
+    fun `get registered users`() {
+        userRepository.add(User("Lucy", "any", "About Lucy"))
+        userRepository.add(User("Carl", "any", "About Carl"))
+        val hexagonalRequest = HexagonalRequest("", "GET")
+
+        val hexagonalResponse = usersEndPoint.hit(hexagonalRequest)
+
+        assertEquals(200, hexagonalResponse.statusCode)
+        assertEquals("application/json", hexagonalResponse.contentType)
+        Json.parse(hexagonalResponse.responseBody).asArray().let {
+            assertEquals(2, it.size())
+            val firstUser = it[0].asObject()
+            assertThat(firstUser.getString("id", ""), matchesPattern(APITestSuit.UUID_PATTERN))
+            assertEquals("Lucy", firstUser.getString("username", ""))
+            val secondUser = it[1].asObject()
+            assertThat(secondUser.getString("id", ""), matchesPattern(APITestSuit.UUID_PATTERN))
+            assertEquals("About Carl", secondUser.getString("about", ""))
+        }
+    }
 }

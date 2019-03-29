@@ -33,6 +33,7 @@ public class Routes {
         get("status", (req, res) -> "OpenChat: OK!");
         post("users", (req, res) -> handleWith(usersEndPoint, req, res));
         post("login", (req, res) -> handleWith(loginEndPoint, req, res));
+        get("users", (req, res) -> handleWith(usersEndPoint, req, res));
     }
 
     private void swaggerRoutes() {

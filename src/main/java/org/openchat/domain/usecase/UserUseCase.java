@@ -3,6 +3,8 @@ package org.openchat.domain.usecase;
 import org.openchat.domain.entity.User;
 import org.openchat.domain.repository.UserRepository;
 
+import java.util.List;
+
 public class UserUseCase {
     private final UserRepository userRepository;
 
@@ -15,6 +17,10 @@ public class UserUseCase {
             throw new UsernameAlreadyInUseException();
 
         return userRepository.add(newUser);
+    }
+
+    public List<User> getAll() {
+        return userRepository.getAll();
     }
 
     public class UsernameAlreadyInUseException extends RuntimeException {

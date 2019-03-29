@@ -3,10 +3,7 @@ package org.openchat.delivery.repository;
 import org.openchat.domain.entity.User;
 import org.openchat.domain.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class InMemoryUserRepository implements UserRepository {
 
@@ -29,5 +26,10 @@ public class InMemoryUserRepository implements UserRepository {
         return store.stream()
             .filter(u -> u.username.equals(username) && u.password.equals(password))
             .findFirst();
+    }
+
+    @Override
+    public List<User> getAll() {
+        return Collections.unmodifiableList(store);
     }
 }
