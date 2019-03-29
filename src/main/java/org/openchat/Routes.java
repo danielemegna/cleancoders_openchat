@@ -46,6 +46,7 @@ public class Routes {
         post("login", (req, res) -> handleWith(loginEndPoint, req, res));
         get("users", (req, res) -> handleWith(usersEndPoint, req, res));
         post("followings", (req, res) -> handleWith(followingsEndPoint, req, res));
+        get("followings/:userId/followees", (req, res) -> handleWith(followingsEndPoint, req, res));
     }
 
     private void swaggerRoutes() {

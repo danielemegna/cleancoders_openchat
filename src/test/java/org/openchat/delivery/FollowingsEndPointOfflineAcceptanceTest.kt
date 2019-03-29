@@ -43,4 +43,15 @@ class FollowingsEndPointOfflineAcceptanceTest() {
         assertEquals("text/plain", hexagonalResponse.contentType)
         assertEquals("Following already exist.", hexagonalResponse.responseBody)
     }
+
+    @Test
+    fun `get followings of not registered user`() {
+        val hexagonalRequest = HexagonalRequest("", mapOf("userId" to UUID.randomUUID().toString()), "GET")
+
+        val hexagonalResponse = endpoint.hit(hexagonalRequest)
+
+        assertEquals(200, hexagonalResponse.statusCode)
+        assertEquals("application/json", hexagonalResponse.contentType)
+        assertEquals("[]", hexagonalResponse.responseBody)
+    }
 }

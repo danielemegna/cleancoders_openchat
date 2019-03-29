@@ -17,12 +17,20 @@ public class FollowingsEndPoint implements EndPoint {
 
     public HexagonalResponse hit(HexagonalRequest request) {
         try {
-            Following followingToCreate = parse(request);
-            useCase.create(followingToCreate);
-            return new HexagonalResponse(201, "text/plain", "Following created.");
+            return runUseCase(request);
         } catch (FollowingsUseCase.FollowingAlreadyExist ex) {
             return new HexagonalResponse(400, "text/plain", "Following already exist.");
         }
+    }
+
+    private HexagonalResponse runUseCase(HexagonalRequest request) {
+        if (request.method.equals("GET") && !request.params.isEmpty()) {
+            return new HexagonalResponse(200, "application/json", "[]");
+        }
+
+        Following followingToCreate = parse(request);
+        useCase.create(followingToCreate);
+        return new HexagonalResponse(201, "text/plain", "Following created.");
     }
 
     private Following parse(HexagonalRequest request) {
