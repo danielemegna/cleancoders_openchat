@@ -28,32 +28,39 @@ public class UsersEndPoint implements EndPoint {
     private HexagonalResponse runUseCase(HexagonalRequest request) {
         if (request.method.equals("GET")) {
             List<User> users = useCase.getAll();
-            JsonArray responseArray = new JsonArray();
-            users.stream()
-                .map(this::serializeUser)
-                .forEach(responseArray::add);
-
-            return new HexagonalResponse(200, "application/json", responseArray.toString());
+            return new HexagonalResponse(200, "application/json", serialize(users));
         }
 
-        User newUser = parseUser(request);
+        User newUser = parseUserFrom(request);
         String newUserUUID = useCase.register(newUser);
-        String responseBody = serializeUser(newUser, newUserUUID).toString();
-        return new HexagonalResponse(201, "application/json", responseBody);
+        return new HexagonalResponse(201, "application/json", serialize(newUser, newUserUUID));
     }
 
-    private JsonObject serializeUser(User user) {
-        return serializeUser(user, user.id);
+    private String serialize(List<User> users) {
+        JsonArray responseArray = new JsonArray();
+        users.stream()
+            .map(this::userToJsonObject)
+            .forEach(responseArray::add);
+
+        return responseArray.toString();
     }
 
-    private JsonObject serializeUser(User user, String userUUID) {
+    private String serialize(User user, String userUUID) {
+        return userToJsonObject(user, userUUID).toString();
+    }
+
+    private JsonObject userToJsonObject(User user) {
+        return userToJsonObject(user, user.id);
+    }
+
+    private JsonObject userToJsonObject(User user, String userUUID) {
         return new JsonObject()
             .add("id", userUUID)
             .add("username", user.username)
             .add("about", user.about);
     }
 
-    private User parseUser(HexagonalRequest request) {
+    private User parseUserFrom(HexagonalRequest request) {
         JsonObject userJson = Json.parse(request.body).asObject();
         return new User(
             userJson.getString("username", ""),
