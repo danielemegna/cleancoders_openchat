@@ -1,17 +1,21 @@
 package org.openchat.domain.usecase;
 
 import org.openchat.domain.entity.Following;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.openchat.domain.repository.FollowingsRepository;
 
 public class FollowingsUseCase {
-    private List<Following> store = new ArrayList<>();
+
+    private final FollowingsRepository followingsRepository;
+
+    public FollowingsUseCase(FollowingsRepository followingsRepository) {
+        this.followingsRepository = followingsRepository;
+    }
 
     public void create(Following followingToCreate) {
-        if (store.contains(followingToCreate))
+        if (followingsRepository.alreadyExists(followingToCreate))
             throw new FollowingAlreadyExist();
-        store.add(followingToCreate);
+
+        followingsRepository.store(followingToCreate);
     }
 
     public class FollowingAlreadyExist extends RuntimeException {

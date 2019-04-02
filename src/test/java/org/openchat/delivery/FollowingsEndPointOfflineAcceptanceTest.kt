@@ -2,6 +2,7 @@ package org.openchat.delivery
 
 import org.junit.Test
 import org.openchat.delivery.endpoint.FollowingsEndPoint
+import org.openchat.delivery.repository.InMemoryFollowingsRepository
 import org.openchat.domain.usecase.FollowingsUseCase
 import java.util.*
 import kotlin.test.assertEquals
@@ -13,7 +14,8 @@ class FollowingsEndPointOfflineAcceptanceTest() {
         private val ANOTHER_REGISTERED_USER_UUID = UUID.randomUUID().toString();
     }
 
-    private val endpoint = FollowingsEndPoint(FollowingsUseCase())
+    private val followingsRepository = InMemoryFollowingsRepository()
+    private val endpoint = FollowingsEndPoint(FollowingsUseCase(followingsRepository))
 
     @Test
     fun `add a following user`() {

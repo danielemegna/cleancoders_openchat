@@ -6,7 +6,9 @@ import org.openchat.delivery.endpoint.EndPoint;
 import org.openchat.delivery.endpoint.FollowingsEndPoint;
 import org.openchat.delivery.endpoint.LoginEndPoint;
 import org.openchat.delivery.endpoint.UsersEndPoint;
+import org.openchat.delivery.repository.InMemoryFollowingsRepository;
 import org.openchat.delivery.repository.InMemoryUserRepository;
+import org.openchat.domain.repository.FollowingsRepository;
 import org.openchat.domain.usecase.FollowingsUseCase;
 import org.openchat.domain.usecase.LoginUseCase;
 import org.openchat.domain.usecase.UserUseCase;
@@ -23,6 +25,7 @@ public class Routes {
 
     public void create() {
         InMemoryUserRepository userRepository = new InMemoryUserRepository();
+        FollowingsRepository followingsRepository = new InMemoryFollowingsRepository();
 
         usersEndPoint = new UsersEndPoint(
             new UserUseCase(userRepository)
@@ -33,7 +36,7 @@ public class Routes {
         );
 
         followingsEndPoint = new FollowingsEndPoint(
-            new FollowingsUseCase()
+            new FollowingsUseCase(followingsRepository)
         );
 
         swaggerRoutes();
