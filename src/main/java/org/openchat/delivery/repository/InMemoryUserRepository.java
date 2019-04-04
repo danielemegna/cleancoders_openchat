@@ -32,4 +32,11 @@ public class InMemoryUserRepository implements UserRepository {
     public List<User> getAll() {
         return Collections.unmodifiableList(store);
     }
+
+    @Override
+    public Optional<User> getById(String followerId) {
+        return store.stream()
+            .filter(u -> u.id.equals(followerId))
+            .findFirst();
+    }
 }

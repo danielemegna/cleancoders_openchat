@@ -13,4 +13,6 @@ public interface UserRepository {
     Optional<User> getByCredentials(String username, String password);
 
     List<User> getAll();
+
+    Optional<User> getById(String followerId);
 }

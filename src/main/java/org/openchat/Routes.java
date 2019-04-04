@@ -36,7 +36,7 @@ public class Routes {
         );
 
         followingsEndPoint = new FollowingsEndPoint(
-            new FollowingsUseCase(followingsRepository)
+            new FollowingsUseCase(followingsRepository, userRepository)
         );
 
         swaggerRoutes();

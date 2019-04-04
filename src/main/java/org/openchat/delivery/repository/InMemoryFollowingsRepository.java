@@ -5,6 +5,7 @@ import org.openchat.domain.repository.FollowingsRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class InMemoryFollowingsRepository implements FollowingsRepository {
 
@@ -18,5 +19,12 @@ public class InMemoryFollowingsRepository implements FollowingsRepository {
     @Override
     public void store(Following followingToCreate) {
         followings.add(followingToCreate);
+    }
+
+    @Override
+    public List<Following> getByFollowerId(String userId) {
+        return followings.stream()
+            .filter(f -> f.followerId.equals(userId))
+            .collect(Collectors.toList());
     }
 }
