@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
-    public boolean isUsernameUsed(String username);
+    boolean isUsernameUsed(String username);
 
-    public String add(User newUser);
+    String add(User newUser);
 
     Optional<User> getByCredentials(String username, String password);
 

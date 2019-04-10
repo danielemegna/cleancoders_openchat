@@ -4,6 +4,7 @@ import org.openchat.delivery.HexagonalRequest;
 import org.openchat.delivery.HexagonalResponse;
 import org.openchat.delivery.endpoint.*;
 import org.openchat.delivery.repository.InMemoryFollowingsRepository;
+import org.openchat.delivery.repository.InMemoryPostRepository;
 import org.openchat.delivery.repository.InMemoryUserRepository;
 import org.openchat.domain.repository.FollowingsRepository;
 import org.openchat.domain.usecase.FollowingsUseCase;
@@ -38,7 +39,7 @@ public class Routes {
             new FollowingsUseCase(followingsRepository, userRepository)
         );
         timelineEndPoint = new TimelineEndPoint(
-            new TimelineUseCase()
+            new TimelineUseCase(new InMemoryPostRepository())
         );
 
         swaggerRoutes();

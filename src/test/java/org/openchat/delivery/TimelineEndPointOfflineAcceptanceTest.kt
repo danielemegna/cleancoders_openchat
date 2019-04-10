@@ -7,6 +7,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThat
 import org.junit.Test
 import org.openchat.delivery.endpoint.TimelineEndPoint
+import org.openchat.delivery.repository.InMemoryPostRepository
 import org.openchat.delivery.repository.InMemoryUserRepository
 import org.openchat.domain.entity.User
 import org.openchat.domain.usecase.TimelineUseCase
@@ -16,7 +17,7 @@ class TimelineEndPointOfflineAcceptanceTest {
     private val userRepository = InMemoryUserRepository()
 
     private val aliceUUID = userRepository.add(User("Alice", "anyPassword", "About Alice"))
-    private val endPoint = TimelineEndPoint(TimelineUseCase())
+    private val endPoint = TimelineEndPoint(TimelineUseCase(InMemoryPostRepository()))
 
     @Test
     fun submitNewPost() {
@@ -73,5 +74,21 @@ class TimelineEndPointOfflineAcceptanceTest {
             assertEquals("Alice first post", second.getString("text", ""))
             assertThat(second.getString("dateTime", ""), matchesPattern(APITestSuit.DATE_PATTERN))
         }
+    }
+
+    @Test
+    fun rememberPostIds() {
+        val submitPostResponse = endPoint.hit(HexagonalRequest(
+            """{ "text": "Hello, I'm Alice" }""",
+            mapOf(":userid" to aliceUUID),
+            "POST"
+        ))
+        val newPostId = Json.parse(submitPostResponse.responseBody).asObject().getString("postId", "")
+
+        val getTimelineRequest = HexagonalRequest("", mapOf(":userid" to aliceUUID), "GET")
+        val getTimelineResponse = endPoint.hit(getTimelineRequest)
+
+        val timelinePostId = Json.parse(getTimelineResponse.responseBody).asArray()[0].asObject().getString("postId", "")
+        assertEquals(newPostId, timelinePostId)
     }
 }
