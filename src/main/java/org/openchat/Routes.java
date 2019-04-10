@@ -8,6 +8,7 @@ import org.openchat.delivery.repository.InMemoryUserRepository;
 import org.openchat.domain.repository.FollowingsRepository;
 import org.openchat.domain.usecase.FollowingsUseCase;
 import org.openchat.domain.usecase.LoginUseCase;
+import org.openchat.domain.usecase.TimelineUseCase;
 import org.openchat.domain.usecase.UserUseCase;
 import spark.Request;
 import spark.Response;
@@ -36,7 +37,9 @@ public class Routes {
         followingsEndPoint = new FollowingsEndPoint(
             new FollowingsUseCase(followingsRepository, userRepository)
         );
-        timelineEndPoint = new TimelineEndPoint();
+        timelineEndPoint = new TimelineEndPoint(
+            new TimelineUseCase()
+        );
 
         swaggerRoutes();
         openchatRoutes();

@@ -9,13 +9,14 @@ import org.junit.Test
 import org.openchat.delivery.endpoint.TimelineEndPoint
 import org.openchat.delivery.repository.InMemoryUserRepository
 import org.openchat.domain.entity.User
+import org.openchat.domain.usecase.TimelineUseCase
 
 class TimelineEndPointOfflineAcceptanceTest {
 
     private val userRepository = InMemoryUserRepository()
 
     private val aliceUUID = userRepository.add(User("Alice", "anyPassword", "About Alice"))
-    private val endPoint = TimelineEndPoint()
+    private val endPoint = TimelineEndPoint(TimelineUseCase())
 
     @Test
     fun submitNewPost() {
