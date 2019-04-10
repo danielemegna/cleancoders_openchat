@@ -28,7 +28,7 @@ public class TimelineEndPoint implements EndPoint {
     private HexagonalResponse runUseCase(HexagonalRequest request) {
         if (request.method.equals("GET")) {
             String userId = request.params.get(":userid");
-            List<Post> posts = usecase.getPostByUser(userId);
+            List<Post> posts = usecase.getPostsByUser(userId);
             return new HexagonalResponse(200, "application/json", serialize(posts));
         }
 

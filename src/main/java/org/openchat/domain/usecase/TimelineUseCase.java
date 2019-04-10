@@ -15,15 +15,10 @@ public class TimelineUseCase {
 
     public Post publish(Post toBeCreated) {
         String postId = postRepository.store(toBeCreated);
-        return new Post(
-            postId,
-            toBeCreated.userId,
-            toBeCreated.text,
-            toBeCreated.dateTime
-        );
+        return new Post(postId, toBeCreated.userId, toBeCreated.text, toBeCreated.dateTime);
     }
 
-    public List<Post> getPostByUser(String userId) {
+    public List<Post> getPostsByUser(String userId) {
         return postRepository.getByUserId(userId);
     }
 }

@@ -17,14 +17,9 @@ public class InMemoryPostRepository implements PostRepository {
 
     @Override
     public String store(Post post) {
-        Post stored = new Post(
-            UUID.randomUUID().toString(),
-            post.userId,
-            post.text,
-            post.dateTime
-        );
-        posts.add(stored);
-        return stored.id;
+        String newPostId = UUID.randomUUID().toString();
+        posts.add(new Post(newPostId, post.userId, post.text, post.dateTime));
+        return newPostId;
     }
 
     @Override
