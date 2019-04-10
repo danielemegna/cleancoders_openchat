@@ -7,6 +7,10 @@ import org.openchat.delivery.HexagonalResponse;
 import org.openchat.domain.entity.Post;
 import org.openchat.domain.usecase.TimelineUseCase;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class TimelineEndPoint implements EndPoint {
 
     private final TimelineUseCase usecase;
@@ -29,17 +33,18 @@ public class TimelineEndPoint implements EndPoint {
         JsonObject postJson = Json.parse(request.body).asObject();
         return new Post(
             request.params.get(":userid"),
-            postJson.getString("text", ""),
-            "2018-01-10T11:30:00Z"
+            postJson.getString("text", "")
         );
     }
 
     private String serialize(Post newPost) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX");
+        ZonedDateTime zonedDateTime = newPost.dateTime.withZoneSameInstant(ZoneOffset.UTC);
         return new JsonObject()
             .add("postId", newPost.id)
             .add("userId", newPost.userId)
             .add("text", newPost.text)
-            .add("dateTime", newPost.dateTime)
+            .add("dateTime", dateTimeFormatter.format(zonedDateTime))
             .toString();
     }
 
