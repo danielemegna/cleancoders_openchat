@@ -11,7 +11,6 @@ import org.openchat.domain.usecase.TimelineUseCase;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TimelineEndPoint implements EndPoint {
@@ -28,15 +27,15 @@ public class TimelineEndPoint implements EndPoint {
 
     private HexagonalResponse runUseCase(HexagonalRequest request) {
         if (request.method.equals("GET")) {
-            List<Post> posts = new ArrayList<>();
+            String userId = request.params.get(":userid");
+            List<Post> posts = usecase.getPostByUser(userId);
             return new HexagonalResponse(200, "application/json", serialize(posts));
         }
 
-        Post toBeCreated = parsePostFrom(request);
-        Post newPost = usecase.storePost(toBeCreated);
-        return new HexagonalResponse(201, "application/json", serialize(newPost));
+        Post toBePublished = parsePostFrom(request);
+        Post publishedPost = usecase.publish(toBePublished);
+        return new HexagonalResponse(201, "application/json", serialize(publishedPost));
     }
-
 
     private Post parsePostFrom(HexagonalRequest request) {
         JsonObject postJson = Json.parse(request.body).asObject();
@@ -46,8 +45,8 @@ public class TimelineEndPoint implements EndPoint {
         );
     }
 
-    private String serialize(Post newPost) {
-        return postToJsonObject(newPost).toString();
+    private String serialize(Post post) {
+        return postToJsonObject(post).toString();
     }
 
     private String serialize(List<Post> posts) {
