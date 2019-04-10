@@ -20,9 +20,11 @@ class TimelineEndPointOfflineAcceptanceTest {
 
     @Test
     fun submitNewPost() {
-        val hexagonalRequest = HexagonalRequest("""{
-            "text": "Hello, I'm Alice"
-        }""", mapOf(":userid" to aliceUUID), "POST")
+        val hexagonalRequest = HexagonalRequest(
+            """{ "text": "Hello, I'm Alice" }""",
+            mapOf(":userid" to aliceUUID),
+            "POST"
+        )
 
         val hexagonalResponse = endPoint.hit(hexagonalRequest)
 
@@ -34,5 +36,18 @@ class TimelineEndPointOfflineAcceptanceTest {
             assertEquals("Hello, I'm Alice", it.getString("text", ""))
             assertThat(it.getString("dateTime", ""), matchesPattern(APITestSuit.DATE_PATTERN))
         }
+    }
+
+    @Test
+    fun getEmptyTimeline() {
+        val hexagonalRequest = HexagonalRequest(
+            "", mapOf(":userid" to aliceUUID), "GET"
+        )
+
+        val hexagonalResponse = endPoint.hit(hexagonalRequest)
+
+        assertEquals(200, hexagonalResponse.statusCode)
+        assertEquals("application/json", hexagonalResponse.contentType)
+        assertEquals("[]", hexagonalResponse.responseBody)
     }
 }

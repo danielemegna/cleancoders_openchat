@@ -24,6 +24,10 @@ public class TimelineEndPoint implements EndPoint {
     }
 
     private HexagonalResponse runUseCase(HexagonalRequest request) {
+        if (request.method.equals("GET")) {
+            return new HexagonalResponse(200, "application/json", "[]");
+        }
+
         Post toBeCreated = parsePostFrom(request);
         Post newPost = usecase.storePost(toBeCreated);
         return new HexagonalResponse(201, "application/json", serialize(newPost));
