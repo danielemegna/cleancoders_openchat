@@ -7,10 +7,7 @@ import org.openchat.delivery.repository.InMemoryFollowingsRepository;
 import org.openchat.delivery.repository.InMemoryPostRepository;
 import org.openchat.delivery.repository.InMemoryUserRepository;
 import org.openchat.domain.repository.FollowingsRepository;
-import org.openchat.domain.usecase.FollowingsUseCase;
-import org.openchat.domain.usecase.LoginUseCase;
-import org.openchat.domain.usecase.TimelineUseCase;
-import org.openchat.domain.usecase.UserUseCase;
+import org.openchat.domain.usecase.*;
 import spark.Request;
 import spark.Response;
 
@@ -22,10 +19,12 @@ public class Routes {
     private LoginEndPoint loginEndPoint;
     private FollowingsEndPoint followingsEndPoint;
     private TimelineEndPoint timelineEndPoint;
+    private WallEndPoint wallEndPoint;
 
     public void create() {
         InMemoryUserRepository userRepository = new InMemoryUserRepository();
         FollowingsRepository followingsRepository = new InMemoryFollowingsRepository();
+        InMemoryPostRepository postRepository = new InMemoryPostRepository();
 
         usersEndPoint = new UsersEndPoint(
             new UserUseCase(userRepository)
@@ -39,7 +38,10 @@ public class Routes {
             new FollowingsUseCase(followingsRepository, userRepository)
         );
         timelineEndPoint = new TimelineEndPoint(
-            new TimelineUseCase(new InMemoryPostRepository())
+            new TimelineUseCase(postRepository)
+        );
+        wallEndPoint = new WallEndPoint(
+            new WallUseCase(postRepository)
         );
 
         swaggerRoutes();
@@ -55,6 +57,7 @@ public class Routes {
         get("followings/:userId/followees", (req, res) -> handleWith(followingsEndPoint, req, res));
         post("users/:userId/timeline", (req, res) -> handleWith(timelineEndPoint, req, res));
         get("users/:userId/timeline", (req, res) -> handleWith(timelineEndPoint, req, res));
+        get("users/:userId/wall", (req, res) -> handleWith(wallEndPoint, req, res));
     }
 
     private void swaggerRoutes() {
