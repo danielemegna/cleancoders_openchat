@@ -14,6 +14,7 @@ import org.openchat.domain.entity.Following
 import org.openchat.domain.entity.Post
 import org.openchat.domain.entity.User
 import org.openchat.domain.usecase.WallUseCase
+import java.time.ZonedDateTime
 
 class WallEndPointOfflineAcceptanceTest {
 
@@ -116,7 +117,7 @@ class WallEndPointOfflineAcceptanceTest {
     }
 
     private fun submitPost(userId: String, text: String) {
-        postRepository.store(Post(userId, text))
+        postRepository.store(Post(userId, text, ZonedDateTime.now()))
         Thread.sleep(42)
     }
 }

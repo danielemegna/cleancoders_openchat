@@ -3,6 +3,7 @@ package org.openchat.domain.usecase;
 import org.openchat.domain.entity.Post;
 import org.openchat.domain.repository.PostRepository;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class TimelineUseCase {
@@ -13,9 +14,10 @@ public class TimelineUseCase {
         this.postRepository = postRepository;
     }
 
-    public Post publish(Post toBeCreated) {
-        String postId = postRepository.store(toBeCreated);
-        return new Post(postId, toBeCreated.userId, toBeCreated.text, toBeCreated.dateTime);
+    public Post publish(Post toBePublished) {
+        Post postWithDate = new Post(toBePublished.userId, toBePublished.text, ZonedDateTime.now());
+        String postId = postRepository.store(postWithDate);
+        return new Post(postId, postWithDate.userId, postWithDate.text, postWithDate.dateTime);
     }
 
     public List<Post> getPostsByUser(String userId) {
