@@ -5,6 +5,7 @@ import integration.APITestSuit
 import org.hamcrest.Matchers.matchesPattern
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import org.openchat.delivery.endpoint.TimelineEndPoint
 import org.openchat.delivery.repository.InMemoryPostRepository
@@ -15,12 +16,12 @@ import org.openchat.domain.usecase.TimelineUseCase
 class TimelineEndPointOfflineAcceptanceTest {
 
     private val userRepository = InMemoryUserRepository()
-
     private val aliceUUID = userRepository.add(User("Alice", "anyPassword", "About Alice"))
+
     private val endPoint = TimelineEndPoint(TimelineUseCase(InMemoryPostRepository()))
 
     @Test
-    fun submitNewPost() {
+    fun `submit new post`() {
         val hexagonalRequest = HexagonalRequest(
             """{ "text": "Hello, I'm Alice" }""",
             mapOf(":userid" to aliceUUID),
@@ -40,7 +41,7 @@ class TimelineEndPointOfflineAcceptanceTest {
     }
 
     @Test
-    fun getEmptyTimeline() {
+    fun `get empty timeline`() {
         val hexagonalRequest = HexagonalRequest("", mapOf(":userid" to aliceUUID), "GET")
 
         val hexagonalResponse = endPoint.hit(hexagonalRequest)
@@ -51,7 +52,7 @@ class TimelineEndPointOfflineAcceptanceTest {
     }
 
     @Test
-    fun submitPostsAndGetTimelineInReverseChronologicalOrder() {
+    fun `submit posts and get timeline in reverse chronological order`() {
         endPoint.hit(HexagonalRequest("""{ "text": "Alice first post" }""", mapOf(":userid" to aliceUUID), "POST"))
         Thread.sleep(42)
         endPoint.hit(HexagonalRequest("""{ "text": "Alice second post" }""", mapOf(":userid" to aliceUUID), "POST"))
@@ -77,7 +78,7 @@ class TimelineEndPointOfflineAcceptanceTest {
     }
 
     @Test
-    fun rememberPostIds() {
+    fun `remember published post ids`() {
         val submitPostResponse = endPoint.hit(HexagonalRequest(
             """{ "text": "Hello, I'm Alice" }""",
             mapOf(":userid" to aliceUUID),
@@ -90,5 +91,21 @@ class TimelineEndPointOfflineAcceptanceTest {
 
         val timelinePostId = Json.parse(getTimelineResponse.responseBody).asArray()[0].asObject().getString("postId", "")
         assertEquals(newPostId, timelinePostId)
+    }
+
+    @Ignore("WIP")
+    @Test
+    fun `cannot submit posts with inappropriate language`() {
+        val hexagonalRequest = HexagonalRequest(
+            """{ "text": "I love orange" }""",
+            mapOf(":userid" to aliceUUID),
+            "POST"
+        )
+
+        val hexagonalResponse = endPoint.hit(hexagonalRequest)
+
+        assertEquals(400, hexagonalResponse.statusCode)
+        assertEquals("text/plain", hexagonalResponse.contentType)
+        assertEquals("Post contains inappropriate language.", hexagonalResponse.responseBody)
     }
 }
