@@ -80,6 +80,32 @@ class WallEndPointOfflineAcceptanceTest {
         }
     }
 
+    @Test
+    fun `wall should show my posts and followed user's ones`() {
+        createFollowing(aliceUUID, lucyUUID)
+        createFollowing(aliceUUID, danielUUID)
+        submitPost(danielUUID, "Daniel post 1")
+        submitPost(aliceUUID, "Alice post 1")
+        submitPost(lucyUUID, "Lucy post 1")
+        submitPost(carlUUID, "Carl post 1")
+        submitPost(aliceUUID, "Alice post 2")
+        submitPost(carlUUID, "Carl post 2")
+        submitPost(danielUUID, "Daniel post 2")
+
+        val hexagonalResponse = getAliceWall()
+
+        assertEquals(200, hexagonalResponse.statusCode)
+        assertEquals("application/json", hexagonalResponse.contentType)
+        Json.parse(hexagonalResponse.responseBody).asArray().let {
+            assertEquals(5, it.size())
+            assertEquals("Daniel post 2", it[0].asObject().getString("text", ""))
+            assertEquals("Alice post 2", it[1].asObject().getString("text", ""))
+            assertEquals("Lucy post 1", it[2].asObject().getString("text", ""))
+            assertEquals("Alice post 1", it[3].asObject().getString("text", ""))
+            assertEquals("Daniel post 1", it[4].asObject().getString("text", ""))
+        }
+    }
+
     private fun getAliceWall(): HexagonalResponse {
         val hexagonalRequest = HexagonalRequest("", mapOf(":userid" to aliceUUID), "GET")
         return endpoint.hit(hexagonalRequest)
