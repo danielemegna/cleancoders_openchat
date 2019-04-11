@@ -41,7 +41,7 @@ public class Routes {
             new TimelineUseCase(postRepository)
         );
         wallEndPoint = new WallEndPoint(
-            new WallUseCase(postRepository)
+            new WallUseCase(postRepository, followingsRepository)
         );
 
         swaggerRoutes();

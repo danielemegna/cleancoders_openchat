@@ -7,8 +7,10 @@ import org.hamcrest.Matchers.matchesPattern
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.openchat.delivery.endpoint.WallEndPoint
+import org.openchat.delivery.repository.InMemoryFollowingsRepository
 import org.openchat.delivery.repository.InMemoryPostRepository
 import org.openchat.delivery.repository.InMemoryUserRepository
+import org.openchat.domain.entity.Following
 import org.openchat.domain.entity.Post
 import org.openchat.domain.entity.User
 import org.openchat.domain.usecase.WallUseCase
@@ -22,8 +24,11 @@ class WallEndPointOfflineAcceptanceTest {
     private val danielUUID = userRepository.add(User("Daniel", "anyPassword", "About Daniel"))
 
     private val postRepository = InMemoryPostRepository()
+    private val followingRepository = InMemoryFollowingsRepository()
 
-    private val endpoint = WallEndPoint(WallUseCase(postRepository))
+    private val endpoint = WallEndPoint(WallUseCase(
+        postRepository, followingRepository
+    ))
 
     @Test
     fun `get wall without posts`() {
@@ -39,9 +44,10 @@ class WallEndPointOfflineAcceptanceTest {
     @Test
     fun `wall should show my posts`() {
         postRepository.store(Post(aliceUUID, "Alice post 1"))
+        Thread.sleep(42)
         postRepository.store(Post(aliceUUID, "Alice post 2"))
-        val hexagonalRequest = HexagonalRequest("", mapOf(":userid" to aliceUUID), "GET")
 
+        val hexagonalRequest = HexagonalRequest("", mapOf(":userid" to aliceUUID), "GET")
         val hexagonalResponse = endpoint.hit(hexagonalRequest)
 
         assertEquals(200, hexagonalResponse.statusCode)
@@ -55,6 +61,29 @@ class WallEndPointOfflineAcceptanceTest {
             assertThat(first.getString("dateTime", ""), matchesPattern(APITestSuit.DATE_PATTERN))
             val second = it[1].asObject()
             assertEquals("Alice post 1", second.getString("text", ""))
+        }
+    }
+
+    @Test
+    fun `wall should show followed user's posts`() {
+        followingRepository.store(Following(aliceUUID, lucyUUID))
+        followingRepository.store(Following(aliceUUID, danielUUID))
+        postRepository.store(Post(danielUUID, "Daniel post 1"))
+        Thread.sleep(42)
+        postRepository.store(Post(lucyUUID, "Lucy post 1"))
+        Thread.sleep(42)
+        postRepository.store(Post(danielUUID, "Daniel post 2"))
+
+        val hexagonalRequest = HexagonalRequest("", mapOf(":userid" to aliceUUID), "GET")
+        val hexagonalResponse = endpoint.hit(hexagonalRequest)
+
+        assertEquals(200, hexagonalResponse.statusCode)
+        assertEquals("application/json", hexagonalResponse.contentType)
+        Json.parse(hexagonalResponse.responseBody).asArray().let {
+            assertEquals(3, it.size())
+            assertEquals("Daniel post 2", it[0].asObject().getString("text", ""))
+            assertEquals("Lucy post 1", it[1].asObject().getString("text", ""))
+            assertEquals("Daniel post 1", it[2].asObject().getString("text", ""))
         }
     }
 }
