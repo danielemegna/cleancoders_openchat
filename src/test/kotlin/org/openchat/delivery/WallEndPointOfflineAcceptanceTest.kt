@@ -32,9 +32,7 @@ class WallEndPointOfflineAcceptanceTest {
 
     @Test
     fun `get wall without posts`() {
-        val hexagonalRequest = HexagonalRequest("", mapOf(":userid" to aliceUUID), "GET")
-
-        val hexagonalResponse = endpoint.hit(hexagonalRequest)
+        val hexagonalResponse = getAliceWall()
 
         assertEquals(200, hexagonalResponse.statusCode)
         assertEquals("application/json", hexagonalResponse.contentType)
@@ -43,12 +41,10 @@ class WallEndPointOfflineAcceptanceTest {
 
     @Test
     fun `wall should show my posts`() {
-        postRepository.store(Post(aliceUUID, "Alice post 1"))
-        Thread.sleep(42)
-        postRepository.store(Post(aliceUUID, "Alice post 2"))
+        submitPost(aliceUUID, "Alice post 1")
+        submitPost(aliceUUID, "Alice post 2")
 
-        val hexagonalRequest = HexagonalRequest("", mapOf(":userid" to aliceUUID), "GET")
-        val hexagonalResponse = endpoint.hit(hexagonalRequest)
+        val hexagonalResponse = getAliceWall()
 
         assertEquals(200, hexagonalResponse.statusCode)
         assertEquals("application/json", hexagonalResponse.contentType)
@@ -66,16 +62,13 @@ class WallEndPointOfflineAcceptanceTest {
 
     @Test
     fun `wall should show followed user's posts`() {
-        followingRepository.store(Following(aliceUUID, lucyUUID))
-        followingRepository.store(Following(aliceUUID, danielUUID))
-        postRepository.store(Post(danielUUID, "Daniel post 1"))
-        Thread.sleep(42)
-        postRepository.store(Post(lucyUUID, "Lucy post 1"))
-        Thread.sleep(42)
-        postRepository.store(Post(danielUUID, "Daniel post 2"))
+        createFollowing(aliceUUID, lucyUUID)
+        createFollowing(aliceUUID, danielUUID)
+        submitPost(danielUUID, "Daniel post 1")
+        submitPost(lucyUUID, "Lucy post 1")
+        submitPost(danielUUID, "Daniel post 2")
 
-        val hexagonalRequest = HexagonalRequest("", mapOf(":userid" to aliceUUID), "GET")
-        val hexagonalResponse = endpoint.hit(hexagonalRequest)
+        val hexagonalResponse = getAliceWall()
 
         assertEquals(200, hexagonalResponse.statusCode)
         assertEquals("application/json", hexagonalResponse.contentType)
@@ -85,5 +78,19 @@ class WallEndPointOfflineAcceptanceTest {
             assertEquals("Lucy post 1", it[1].asObject().getString("text", ""))
             assertEquals("Daniel post 1", it[2].asObject().getString("text", ""))
         }
+    }
+
+    private fun getAliceWall(): HexagonalResponse {
+        val hexagonalRequest = HexagonalRequest("", mapOf(":userid" to aliceUUID), "GET")
+        return endpoint.hit(hexagonalRequest)
+    }
+
+    private fun createFollowing(followerId: String, followedId: String) {
+        followingRepository.store(Following(followerId, followedId))
+    }
+
+    private fun submitPost(userId: String, text: String) {
+        postRepository.store(Post(userId, text))
+        Thread.sleep(42)
     }
 }
