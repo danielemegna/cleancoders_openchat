@@ -38,7 +38,7 @@ public class Routes {
             new FollowingsUseCase(followingsRepository, userRepository)
         );
         timelineEndPoint = new TimelineEndPoint(
-            new TimelineUseCase(postRepository)
+            new TimelineUseCase(postRepository, userRepository)
         );
         wallEndPoint = new WallEndPoint(
             new WallUseCase(postRepository, followingsRepository)

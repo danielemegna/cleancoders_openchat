@@ -24,6 +24,8 @@ public class TimelineEndPoint implements EndPoint {
     public HexagonalResponse hit(HexagonalRequest request) {
         try {
             return runUseCase(request);
+        } catch (TimelineUseCase.NotExistingUserPublishAttemptException ex) {
+            return new HexagonalResponse(400, "text/plain", "User does not exists.");
         } catch (TimelineUseCase.InappropriateLanguageException ex) {
             return new HexagonalResponse(400, "text/plain", "Post contains inappropriate language.");
         }

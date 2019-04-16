@@ -11,13 +11,14 @@ import org.openchat.delivery.repository.InMemoryPostRepository
 import org.openchat.delivery.repository.InMemoryUserRepository
 import org.openchat.domain.entity.User
 import org.openchat.domain.usecase.TimelineUseCase
+import java.util.*
 
 class TimelineEndPointOfflineAcceptanceTest {
 
     private val userRepository = InMemoryUserRepository()
     private val aliceUUID = userRepository.add(User("Alice", "anyPassword", "About Alice"))
 
-    private val endPoint = TimelineEndPoint(TimelineUseCase(InMemoryPostRepository()))
+    private val endPoint = TimelineEndPoint(TimelineUseCase(InMemoryPostRepository(), userRepository))
 
     @Test
     fun `submit new post`() {
@@ -105,5 +106,20 @@ class TimelineEndPointOfflineAcceptanceTest {
         assertEquals(400, hexagonalResponse.statusCode)
         assertEquals("text/plain", hexagonalResponse.contentType)
         assertEquals("Post contains inappropriate language.", hexagonalResponse.responseBody)
+    }
+
+    @Test
+    fun `not registered users should not be able to publish`() {
+        val hexagonalRequest = HexagonalRequest(
+            """{ "text": "Post text." }""",
+            mapOf(":userid" to UUID.randomUUID().toString()),
+            "POST"
+        )
+
+        val hexagonalResponse = endPoint.hit(hexagonalRequest)
+
+        assertEquals(400, hexagonalResponse.statusCode)
+        assertEquals("text/plain", hexagonalResponse.contentType)
+        assertEquals("User does not exists.", hexagonalResponse.responseBody)
     }
 }

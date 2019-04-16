@@ -3,11 +3,15 @@ package org.openchat.domain.usecase
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.junit.Assert.assertNull
+import org.junit.Before
 import org.junit.Test
 import org.mockito.Matchers
 import org.mockito.Mockito.*
 import org.openchat.domain.entity.Post
+import org.openchat.domain.entity.User
 import org.openchat.domain.repository.PostRepository
+import org.openchat.domain.repository.UserRepository
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -15,7 +19,14 @@ import kotlin.test.assertNotNull
 class TimelineUseCaseTest {
 
     private val postRepository = mock(PostRepository::class.java)
-    private val useCase = TimelineUseCase(postRepository)
+    private val userRepository = mock(UserRepository::class.java)
+
+    private val useCase = TimelineUseCase(postRepository, userRepository)
+
+    @Before
+    fun setUp() {
+        `when`(userRepository.getById(any())).thenReturn(Optional.of(User("Alice", "Password")))
+    }
 
     @Test
     fun returnPostFilledWithIdAndDateOnPublish() {
@@ -67,5 +78,11 @@ class TimelineUseCaseTest {
     @Test(expected = TimelineUseCase.InappropriateLanguageException::class)
     fun checkAlsoPluralInappropriateWords() {
         useCase.publish(Post("userId", "I love elephants."))
+    }
+
+    @Test(expected = TimelineUseCase.NotExistingUserPublishAttemptException::class)
+    fun throwRelatedExceptionOnPublishWhenUserNotPresentInUserRepository() {
+        `when`(userRepository.getById(any())).thenReturn(Optional.empty())
+        useCase.publish(Post("userId", "Hello, World!"))
     }
 }
