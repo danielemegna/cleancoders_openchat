@@ -4,9 +4,20 @@ import org.openchat.domain.entity.Post;
 import org.openchat.domain.repository.PostRepository;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TimelineUseCase {
+
+    private final static Set<String> INNAPROPRIATE_WORDS = new HashSet<String>() {{
+        add("orange");
+        add("oranges");
+        add("ice cream");
+        add("ice creams");
+        add("elephant");
+        add("elephants");
+    }};
 
     private final PostRepository postRepository;
 
@@ -22,8 +33,11 @@ public class TimelineUseCase {
     }
 
     private void checkLanguage(Post toBePublished) {
-        if (toBePublished.text.contains("orange"))
-            throw new InappropriateLanguageException();
+        boolean containsInappropriateWords = INNAPROPRIATE_WORDS.stream().anyMatch(
+            word -> toBePublished.text.toUpperCase().contains(word.toUpperCase())
+        );
+
+        if (containsInappropriateWords) throw new InappropriateLanguageException();
     }
 
     public List<Post> getPostsByUser(String userId) {

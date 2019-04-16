@@ -18,6 +18,20 @@ class TimelineUseCaseTest {
     private val useCase = TimelineUseCase(postRepository)
 
     @Test
+    fun returnPostFilledWithIdAndDateOnPublish() {
+        `when`(postRepository.store(any())).thenReturn("postUUID")
+        val toBePublished = Post("userId", "Post text")
+        assertNull(toBePublished.id)
+        assertNull(toBePublished.dateTime)
+
+        val published = useCase.publish(toBePublished)
+
+        assertNotNull(published.id)
+        assertNotNull(published.dateTime)
+        assertEquals("Post text", published.text)
+    }
+
+    @Test
     fun callStoreOnRepositorySettingDateTimeOnPublish() {
         useCase.publish(Post("userId", "Post text"))
 
@@ -35,22 +49,23 @@ class TimelineUseCaseTest {
         }))
     }
 
-    @Test
-    fun returnPostFilledWithIdAndDateOnPublish() {
-        `when`(postRepository.store(any())).thenReturn("postUUID")
-        val toBePublished = Post("userId", "Post text")
-        assertNull(toBePublished.id)
-        assertNull(toBePublished.dateTime)
-
-        val published = useCase.publish(toBePublished)
-
-        assertNotNull(published.id)
-        assertNotNull(published.dateTime)
-        assertEquals("Post text", published.text)
-    }
-
     @Test(expected = TimelineUseCase.InappropriateLanguageException::class)
     fun throwRelatedExceptionOnPublishWhenPostContainsInappropriateLanguage() {
         useCase.publish(Post("userId", "I just ate an orange."))
+    }
+
+    @Test(expected = TimelineUseCase.InappropriateLanguageException::class)
+    fun notOnlyOrangeIsAnInappropriateWord() {
+        useCase.publish(Post("userId", "I just ate an ice cream."))
+    }
+
+    @Test(expected = TimelineUseCase.InappropriateLanguageException::class)
+    fun checkAlsoUppercaseInappropriateWords() {
+        useCase.publish(Post("userId", "He looks like an ELEPHANT!"))
+    }
+
+    @Test(expected = TimelineUseCase.InappropriateLanguageException::class)
+    fun checkAlsoPluralInappropriateWords() {
+        useCase.publish(Post("userId", "I love elephants."))
     }
 }
