@@ -48,4 +48,9 @@ class TimelineUseCaseTest {
         assertNotNull(published.dateTime)
         assertEquals("Post text", published.text)
     }
+
+    @Test(expected = TimelineUseCase.InappropriateLanguageException::class)
+    fun throwRelatedExceptionOnPublishWhenPostContainsInappropriateLanguage() {
+        useCase.publish(Post("userId", "I just ate an orange."))
+    }
 }

@@ -22,7 +22,11 @@ public class TimelineEndPoint implements EndPoint {
     }
 
     public HexagonalResponse hit(HexagonalRequest request) {
-        return runUseCase(request);
+        try {
+            return runUseCase(request);
+        } catch (TimelineUseCase.InappropriateLanguageException ex) {
+            return new HexagonalResponse(400, "text/plain", "Post contains inappropriate language.");
+        }
     }
 
     private HexagonalResponse runUseCase(HexagonalRequest request) {

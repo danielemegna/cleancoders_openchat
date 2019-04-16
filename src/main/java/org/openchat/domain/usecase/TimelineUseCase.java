@@ -15,12 +15,21 @@ public class TimelineUseCase {
     }
 
     public Post publish(Post toBePublished) {
+        checkLanguage(toBePublished);
         Post postWithDate = new Post(toBePublished.userId, toBePublished.text, ZonedDateTime.now());
         String postId = postRepository.store(postWithDate);
         return new Post(postId, postWithDate.userId, postWithDate.text, postWithDate.dateTime);
     }
 
+    private void checkLanguage(Post toBePublished) {
+        if (toBePublished.text.contains("orange"))
+            throw new InappropriateLanguageException();
+    }
+
     public List<Post> getPostsByUser(String userId) {
         return postRepository.getByUserId(userId);
+    }
+
+    public class InappropriateLanguageException extends RuntimeException {
     }
 }

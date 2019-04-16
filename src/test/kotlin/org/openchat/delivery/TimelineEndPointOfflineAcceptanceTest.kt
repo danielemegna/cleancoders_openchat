@@ -5,7 +5,6 @@ import integration.APITestSuit
 import org.hamcrest.Matchers.matchesPattern
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThat
-import org.junit.Ignore
 import org.junit.Test
 import org.openchat.delivery.endpoint.TimelineEndPoint
 import org.openchat.delivery.repository.InMemoryPostRepository
@@ -93,7 +92,6 @@ class TimelineEndPointOfflineAcceptanceTest {
         assertEquals(newPostId, timelinePostId)
     }
 
-    @Ignore("WIP")
     @Test
     fun `cannot submit posts with inappropriate language`() {
         val hexagonalRequest = HexagonalRequest(
