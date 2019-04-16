@@ -8,6 +8,7 @@ import org.mockito.Matchers
 import org.mockito.Mockito.*
 import org.openchat.domain.entity.Post
 import org.openchat.domain.repository.PostRepository
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 
@@ -17,14 +18,12 @@ class TimelineUseCaseTest {
     private val useCase = TimelineUseCase(postRepository)
 
     @Test
-    fun callStoreOnRepository() {
-        val postToBePublished = Post("userId", "Post text")
-
-        useCase.publish(postToBePublished)
+    fun callStoreOnRepositorySettingDateTimeOnPublish() {
+        useCase.publish(Post("userId", "Post text"))
 
         verify(postRepository).store(Matchers.argThat(object : BaseMatcher<Post>() {
-            override fun matches(p0: Any?): Boolean {
-                val actual = p0 as Post
+            override fun matches(param: Any?): Boolean {
+                val actual = param as Post
                 return actual.userId == "userId" &&
                     actual.text == "Post text" &&
                     actual.dateTime != null
@@ -37,7 +36,7 @@ class TimelineUseCaseTest {
     }
 
     @Test
-    fun returnPostFilledWithIdAndDate() {
+    fun returnPostFilledWithIdAndDateOnPublish() {
         `when`(postRepository.store(any())).thenReturn("postUUID")
         val toBePublished = Post("userId", "Post text")
         assertNull(toBePublished.id)
@@ -47,5 +46,6 @@ class TimelineUseCaseTest {
 
         assertNotNull(published.id)
         assertNotNull(published.dateTime)
+        assertEquals("Post text", published.text)
     }
 }
