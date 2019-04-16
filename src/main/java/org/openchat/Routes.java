@@ -29,11 +29,9 @@ public class Routes {
         usersEndPoint = new UsersEndPoint(
             new UserUseCase(userRepository)
         );
-
         loginEndPoint = new LoginEndPoint(
             new LoginUseCase(userRepository)
         );
-
         followingsEndPoint = new FollowingsEndPoint(
             new FollowingsUseCase(followingsRepository, userRepository)
         );
