@@ -34,9 +34,9 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> getById(String followerId) {
+    public Optional<User> getById(String userId) {
         return store.stream()
-            .filter(u -> u.id.equals(followerId))
+            .filter(u -> u.id.equals(userId))
             .findFirst();
     }
 }

@@ -14,5 +14,5 @@ public interface UserRepository {
 
     List<User> getAll();
 
-    Optional<User> getById(String followerId);
+    Optional<User> getById(String userId);
 }
