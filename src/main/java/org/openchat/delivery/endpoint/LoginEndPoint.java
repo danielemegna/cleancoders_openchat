@@ -17,18 +17,16 @@ public class LoginEndPoint implements EndPoint {
 
     public HexagonalResponse hit(HexagonalRequest request) {
         try {
-            String responseBody = runUseCase(request);
-            return new HexagonalResponse(200, "application/json", responseBody);
-
+            return runUseCase(request);
         } catch (LoginUseCase.InvalidCredentialsException ex) {
             return new HexagonalResponse(404, "text/plain", "Invalid credentials.");
         }
     }
 
-    private String runUseCase(HexagonalRequest request) {
+    private HexagonalResponse runUseCase(HexagonalRequest request) {
         User userToLogin = parseUser(request);
         User loggedUser = useCase.login(userToLogin);
-        return serializeUser(loggedUser);
+        return new HexagonalResponse(200, "application/json", serializeUser(loggedUser));
     }
 
     private String serializeUser(User user) {

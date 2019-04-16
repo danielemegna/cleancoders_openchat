@@ -16,6 +16,7 @@ public class LoginUseCase {
         Optional<User> user = userRepository.getByCredentials(userToLogin.username, userToLogin.password);
         if (user.isPresent())
             return user.get();
+
         throw new InvalidCredentialsException();
     }
 
